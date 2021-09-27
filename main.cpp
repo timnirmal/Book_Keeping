@@ -24,8 +24,8 @@ int main() {
 
 
     //Keep Account Balances in a vector to avoid read files again and again
-    vector <string> account_number_list;
-    vector <string> account_balance_list;
+    vector <pair<string,string>> account_number_list;
+    //vector <string> account_balance_list;
 
 
     //////////////////////////////////////// Need find solution for non empty folders. But this will still do the work.
@@ -71,8 +71,7 @@ int main() {
             outfile << date << ",0," << transaction_amount << "," << transaction_amount <<endl;
             outfile.close();
 
-            account_number_list.push_back(account_number);
-            account_balance_list.push_back(transaction_amount);
+            account_number_list.push_back(make_pair(account_number,transaction_amount));
         }
 
         ////bankVault
@@ -144,11 +143,11 @@ int main() {
     cout << s << endl;
 
     for (int i =0; i< account_number_list.size() ; i++) {
-        cout <<  account_balance_list[i] << " ";
+        cout <<  account_number_list[i].first << " ";
     }
     cout<<endl;
     for (int i =0; i< account_number_list.size() ; i++) {
-        cout << account_number_list[i] << " ";
+        cout << account_number_list[i].second << " ";
     }
     return 0;
 }
