@@ -4,6 +4,7 @@
 #include <fstream>
 #include <cstring>
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -16,10 +17,15 @@ int main() {
     string s;
     int item_count=0;
 
-    string account_name;
+    string account_number;
     string date;
-    string account_balance;
+    string transaction_amount;
+    string transaction_type;
 
+
+    //Keep Account Balances in a vector to avoid read files again and again
+    vector <string> account_number_list;
+    vector <string> account_balance_list;
 
 
     //////////////////////////////////////// Need find solution for non empty folders. But this will still do the work.
@@ -34,6 +40,12 @@ int main() {
     ifstream myReadFile;
     myReadFile.open(dir+"balance.txt");
     string output;
+
+    //Delete any content exists (change later)
+    ofstream bankVault (dir + "bankVault.txt");
+    bankVault.close();
+    int bank_Balance = 0;
+
     if (myReadFile.is_open()) {
         while (!myReadFile.eof()) {
             myReadFile >> output;
@@ -44,25 +56,37 @@ int main() {
                 if (item_count % 2 == 0){
                     date = token;
                 }if (item_count % 2 == 1){
-                    account_name = token;
+                    account_number = token;
                 }
                 item_count++;
                 s.erase(0, pos + delimiter.length());
             }
-            account_balance = s;
-            cout<<date<< "  " <<account_name<< "  " <<account_balance<< endl;
+            transaction_amount = s;
+            bank_Balance += stoi(transaction_amount);
+            cout << date << "  " << account_number << "  " << transaction_amount << endl;
 
             //Create text file according to the account name
             //Create + Open + Write File
-            ofstream outfile (dir + "accounts\\" + account_name);
-            outfile << date << ",0," << account_balance << "," << account_balance;
+            ofstream outfile (dir + "accounts\\" + account_number);
+            outfile << date << ",0," << transaction_amount << "," << transaction_amount <<endl;
             outfile.close();
+
+            account_number_list.push_back(account_number);
+            account_balance_list.push_back(transaction_amount);
         }
+
+        ////bankVault
+        ofstream bankVault (dir + "bankVault.txt",ios_base::app);
+        bankVault << date << ",0," << transaction_amount << "," << bank_Balance <<endl;
+        bankVault.close();
     }
     myReadFile.close();
 
+
     ///////////////////////////////////////////////////////////// Read transaction
     myReadFile.open(dir + "transaction.txt");
+    item_count = 0;
+
     if (myReadFile.is_open()) {
         while (!myReadFile.eof()) {
             myReadFile >> output;
@@ -70,31 +94,44 @@ int main() {
             s = output;
             while ((pos = s.find(delimiter)) != string::npos) {
                 token = s.substr(0, pos);
-                if (item_count % 2 == 0){
+                if (item_count % 3 == 0){
                     date = token;
-                }if (item_count % 2 == 1){
-                    account_name = token;
+                }if (item_count % 3 == 1){
+                    account_number = token;
+                }if (item_count % 3 == 2){
+                    transaction_type = token;
                 }
                 item_count++;
                 s.erase(0, pos + delimiter.length());
             }
-            account_balance = s;
-            cout<<date<< "  " <<account_name<< "  " <<account_balance<< endl;
+            transaction_amount = s;
+            cout << date << "  " << account_number << "  " << transaction_type << "  " << transaction_amount << endl;
 
             //Create text file according to the account name
             //Create + Open + Write File
-            ofstream outfile (dir + "accounts\\" + account_name);
-            outfile << date << ",0," << account_balance << "," << account_balance;
-            outfile.close();
+            ofstream accounts (dir + "accounts\\" + account_number,ios_base::app);
+            if (stoi(transaction_type) == 1){
+                //need to read the Balance from account
+
+            }
+
+            accounts << date << "," << transaction_type << ","
+                << transaction_amount << "," << transaction_amount <<endl;
+            accounts.close();
+            ////bankVault
+            ofstream bankVault (dir + "bankVault.txt",ios_base::app);
+            bankVault << date << "," << transaction_type << ","
+                << transaction_amount << "," << transaction_amount <<endl;
+            bankVault.close();
         }
     }
     myReadFile.close();
 
 
     //Create + Open + Write File
-    ofstream outfile (dir + "accounts\\"+ account_name);
-    outfile << "my text here!" << std::endl;
-    outfile.close();
+    //ofstream outfile (dir + "accounts\\" + account_number);
+    //outfile << "my text here!" << std::endl;
+    //outfile.close();
 
 
     s = "He,Yaluwe,apiawaw";
@@ -106,6 +143,13 @@ int main() {
     }
     cout << s << endl;
 
+    for (int i =0; i< account_number_list.size() ; i++) {
+        cout <<  account_balance_list[i] << " ";
+    }
+    cout<<endl;
+    for (int i =0; i< account_number_list.size() ; i++) {
+        cout << account_number_list[i] << " ";
+    }
     return 0;
 }
 
