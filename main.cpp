@@ -5,10 +5,38 @@
 #include <cstring>
 #include <string>
 #include <vector>
+#include<bits/stdc++.h>
+#include <iomanip>
 
 using namespace std;
 
+void pres (size_t const p = 2){
+    cout<< setprecision(p) <<fixed;
+}
+
+double stodpres(string const &str, size_t const p = 2) {
+    stringstream sstrm;
+    sstrm <<  str << endl;
+
+    double d;
+    sstrm >> d;
+
+    int o1 = d *1000;
+    double o2 = o1/1000.0;
+
+    cout<< setprecision(p) <<fixed ;
+    return o2;
+}
+
+string to_string_pres(double num,  size_t const p = 2){
+    ostringstream streamObj;
+    streamObj << std::fixed << std::setprecision(p);
+    streamObj << num;
+    return streamObj.str();
+}
+
 int main() {
+
     //Change this directory to project
     string dir = "C:\\Users\\timni\\Book-Keeping\\";
     string delimiter = ",";
@@ -45,6 +73,7 @@ int main() {
     ofstream bankVault (dir + "bankVault.txt");
     bankVault.close();
     int bank_Balance = 0;
+    double account_balance ;
 
     if (myReadFile.is_open()) {
         while (!myReadFile.eof()) {
@@ -104,19 +133,32 @@ int main() {
                 s.erase(0, pos + delimiter.length());
             }
             transaction_amount = s;
-            cout << date << "  " << account_number << "  " << transaction_type << "  " << transaction_amount << endl;
 
+            //Find the position of the account number in Vector
+            for (int i=0; i < account_number_list.size(); i++){
+                if (account_number_list[i].first == account_number){
+                    account_balance = stodpres(account_number_list[i].second);
+                }
+            }
+
+            if (stoi(transaction_type) == 1){
+                //need to read the Balance from account
+                //cout << "\n\tBefore = " << account_balance;
+                account_balance += stodpres(transaction_amount);
+                //cout << "\tAfter = " << account_balance <<endl;
+            }
+            else {
+                //cout << endl<<account_balance << "  "<< stodpres(transaction_amount) << "  "<<
+                  //account_balance - stodpres(transaction_amount)<<endl;
+                account_balance -= stodpres(transaction_amount);
+            }
             //Create text file according to the account name
             //Create + Open + Write File
             ofstream accounts (dir + "accounts\\" + account_number,ios_base::app);
-            if (stoi(transaction_type) == 1){
-                //need to read the Balance from account
-
-            }
-
-            accounts << date << "," << transaction_type << ","
-                << transaction_amount << "," << transaction_amount <<endl;
+            accounts << date << "," << transaction_type << "," << transaction_amount << "," <<
+                     to_string_pres(account_balance) << endl;
             accounts.close();
+            cout << date << "  " << account_number << "  " << transaction_type << "  " << account_balance << endl;
             ////bankVault
             ofstream bankVault (dir + "bankVault.txt",ios_base::app);
             bankVault << date << "," << transaction_type << ","
@@ -133,7 +175,7 @@ int main() {
     //outfile.close();
 
 
-    s = "He,Yaluwe,apiawaw";
+    s = "He,Yaluwe,apiawaw\n";
 
     while ((pos = s.find(delimiter)) != string::npos) {
         token = s.substr(0, pos);
@@ -142,13 +184,58 @@ int main() {
     }
     cout << s << endl;
 
-    for (int i =0; i< account_number_list.size() ; i++) {
-        cout <<  account_number_list[i].first << " ";
+
+    for (auto & i : account_number_list) {
+        cout <<  stodpres(i.first) << " ";
     }
     cout<<endl;
-    for (int i =0; i< account_number_list.size() ; i++) {
-        cout << account_number_list[i].second << " ";
+    for (auto & i : account_number_list) {
+        cout << stodpres(i.second) << " ";
     }
+
+    cout<<endl<<endl;
+
+    /*
+    double f =3.14159123;
+    std::cout << std::setprecision(5) << f << '\n';
+    std::cout << std::setprecision(9) << f << '\n';
+    std::cout << std::setprecision(10) << f << '\n';
+    std::cout << std::setprecision(19) << f << "\n\n";
+
+    string test = "795675.12345";
+
+    double k = stodpres(test, 2);
+
+
+    cout<<"k = " << k <<endl;
+    k+=5.124;
+    cout<< setprecision(2) <<fixed;
+    cout<<"k = " << k <<endl;
+    k-=5.124;
+    k+=5.128;
+    cout<<"k = " << k <<endl;
+    */
+
+    /*find(account_number_list.begin(), account_number_list.end(), [&](pair<string,string> const & ref) {
+        return ref.first == account_number;
+    });*/
+
+    //cout<<account_number_list[9].first<<endl<<account_number;
+    //cout<<endl<<endl;
+/*
+    string bal;
+
+    for (int i=0; i < account_number_list.size(); i++){
+        if (account_number_list[i].first == account_number){
+            setprecision(30);
+            cout<<i<<endl;
+            //account_balance = stod(account_number_list[i].second);
+            bal = account_number_list[i].second;
+            //cout<< account_balance <<endl;
+            cout<< stold(bal) <<endl;
+        }
+    }*/
+
     return 0;
 }
 
