@@ -134,7 +134,6 @@ void Interests(vector <pair<string,string>> &account_number_list, string &dir, s
 }
 
 int main() {
-
     //Change this directory to project
     string dir = "C:\\Users\\timni\\Book-Keeping\\";
     string delimiter = ",";
