@@ -73,15 +73,15 @@ void Chargers(vector <pair<string,string>> &account_number_list , string &dir, s
             //Create text file according to the account name
             //Create + Open + Write File
             ofstream accounts(dir + "accounts\\" + account_number, ios_base::app);
-            accounts << date << "," << transaction_type << "," << transaction_amount << "," <<
+            accounts << to_string(stoi(date)-1) << "," << transaction_type << "," << transaction_amount << "," <<
                      to_string_pres(account_balance) << endl;
             accounts.close();
 
-            cout << date << "  " << account_number << "  " << transaction_type << "  " << account_balance << endl;
+            cout << to_string(stoi(date)-1) << "  " << account_number << "  " << transaction_type << "  " << account_balance << endl;
 
             ////bankVault
             ofstream bankVault(dir + "bankVault.txt", ios_base::app);
-            bankVault << date << "," << transaction_type << ","
+            bankVault << to_string(stoi(date)-1) << "," << transaction_type << ","
                       << transaction_amount << "," << to_string_pres(bank_Balance) << endl;
             bankVault.close();
 
@@ -98,13 +98,17 @@ void Interests(vector <pair<string,string>> &account_number_list, string &dir, s
         cout<<"\t"<<i<<"  " << account_number_list[i].first << "  "<< account_number_list[i].second<<endl;
         string account_number = account_number_list[i].first;
 
-        string transaction_amount = "-10";
+        string transaction_amount;
+        double transaction = 0;
         double account_balance = stodpres(account_number_list[i].second);
 
-        if (account_balance < 1000){
+        if (0 < account_balance){
             //Perform transaction
-            account_balance -= 10;
-            bank_Balance += 10;
+            transaction = account_balance * 0.02 / 100;
+            transaction_amount = to_string_pres(transaction);
+            cout << endl<< "\t" <<transaction<<endl;
+            account_balance += transaction;
+            bank_Balance -= transaction;
 
             account_number_list[i].second = to_string_pres(account_balance);
 
@@ -141,7 +145,7 @@ int main() {
 
     string account_number;
     string date;
-    string old_date = "0";
+    string old_date = "20210100";
     string transaction_amount;
     string transaction_type;
     int position = 0;
@@ -245,12 +249,44 @@ int main() {
                  transaction_amount << "  " << account_balance << endl ;
 
             //Check beginning of the date
-            if (date != old_date){
+            if (stodpres(date) == stodpres(old_date) + 1){
+                cout<<endl<<"Here  = "<< old_date << " "<<date<<endl;
                 //End of the day Detected
                 cout<<endl;
                 Chargers(account_number_list,dir,date,bank_Balance);
                 Interests(account_number_list,dir,date,bank_Balance);
             }
+            else{
+                int gap = stodpres(date) - stodpres(old_date);
+                if (gap!=0){
+                    cout<< "\t\tGap" <<  gap <<endl<<endl;
+                    for (int j=0; j< gap; j++){
+                        cout<<endl;
+                        string old_date_cal = to_string(stoi(old_date)+1);
+                        Chargers(account_number_list,dir,old_date_cal,bank_Balance);
+                        Interests(account_number_list,dir,old_date_cal,bank_Balance);
+                        cout<< "old date = " <<old_date<<endl<<endl;
+                        old_date = old_date_cal;
+                    }
+                }
+            }
+            /*else {
+                bool flag = 1;
+                while (flag){
+                    if (stodpres(date) == stodpres(old_date) + 1){
+                        flag=0;
+                    }
+
+                    cout<<endl;
+                    Chargers(account_number_list,dir,date,bank_Balance);
+                    Interests(account_number_list,dir,date,bank_Balance);
+                    cout<<endl<< "\t date  = "<<old_date <<endl;
+                    old_date = to_string(stoi(old_date) + 1);
+
+                    cout<<endl<< " \tdate  = "<<old_date <<endl;
+                    cout<<endl<< " \tReal date  = "<<date <<endl;
+                }
+            }*/
 
             if (stoi(transaction_type) == 1){ //Deposit
                 //need to read the Balance from account
