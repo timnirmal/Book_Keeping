@@ -10,10 +10,6 @@
 
 using namespace std;
 
-void pres (size_t const p = 2){
-    cout<< setprecision(p) <<fixed;
-}
-
 double stodpres(string const &str, size_t const p = 2) {
     stringstream sstrm;
     sstrm <<  str << endl;
@@ -49,7 +45,7 @@ void Chargers(vector <pair<string,string>> &account_number_list , string &dir, s
     string transaction_type = "4";
 
     for (int i=0; i < account_number_list.size(); i++){
-        cout<<"\t"<<i<<"  " << account_number_list[i].first << "  "<< account_number_list[i].second<<endl;
+        //cout<<"\t"<<i<<"  " << account_number_list[i].first << "  "<< account_number_list[i].second<<endl;
         string account_number = account_number_list[i].first;
 
         string transaction_amount;
@@ -76,8 +72,7 @@ void Chargers(vector <pair<string,string>> &account_number_list , string &dir, s
             accounts << to_string(stoi(date)-1) << "," << transaction_type << "," << transaction_amount << "," <<
                      to_string_pres(account_balance) << endl;
             accounts.close();
-
-            cout << to_string(stoi(date)-1) << "  " << account_number << "  " << transaction_type << "  " << account_balance << endl;
+            //cout << to_string(stoi(date)-1) << "  " << account_number << "  " << transaction_type << "  " << account_balance << endl;
 
             ////bankVault
             ofstream bankVault(dir + "bankVault.txt", ios_base::app);
@@ -95,7 +90,7 @@ void Interests(vector <pair<string,string>> &account_number_list, string &dir, s
     string transaction_type = "4";
 
     for (int i=0; i < account_number_list.size(); i++){
-        cout<<"\t"<<i<<"  " << account_number_list[i].first << "  "<< account_number_list[i].second<<endl;
+        //cout<<"\t"<<i<<"  " << account_number_list[i].first << "  "<< account_number_list[i].second<<endl;
         string account_number = account_number_list[i].first;
 
         string transaction_amount;
@@ -106,7 +101,7 @@ void Interests(vector <pair<string,string>> &account_number_list, string &dir, s
             //Perform transaction
             transaction = account_balance * 0.02 / 100;
             transaction_amount = to_string_pres(transaction);
-            cout << endl<< "\t" <<transaction<<endl;
+            //cout << endl<< "\t" <<transaction<<endl;
             account_balance += transaction;
             bank_Balance -= transaction;
 
@@ -121,7 +116,7 @@ void Interests(vector <pair<string,string>> &account_number_list, string &dir, s
                      to_string_pres(account_balance) << endl;
             accounts.close();
 
-            cout << date << "  " << account_number << "  " << transaction_type << "  " << account_balance << endl;
+            //cout << date << "  " << account_number << "  " << transaction_type << "  " << account_balance << endl;
 
             ////bankVault
             ofstream bankVault (dir + "bankVault.txt",ios_base::app);
@@ -190,7 +185,7 @@ int main() {
             }
             transaction_amount = s;
             bank_Balance += stoi(transaction_amount);
-            cout << date << "  " << account_number << "  " << transaction_amount << endl;
+            //cout << date << "  " << account_number << "  " << transaction_amount << endl;
 
             //Create text file according to the account name
             //Create + Open + Write File
@@ -244,27 +239,27 @@ int main() {
                 }
             }
 
-            cout << date << "  " << account_number << "  " << transaction_type << "  " <<
-                 transaction_amount << "  " << account_balance << endl ;
+            //cout << date << "  " << account_number << "  " << transaction_type << "  " <<
+                 //transaction_amount << "  " << account_balance << endl ;
 
             //Check beginning of the date
             if (stodpres(date) == stodpres(old_date) + 1){
-                cout<<endl<<"Here  = "<< old_date << " "<<date<<endl;
+                //cout<<endl<<"Here  = "<< old_date << " "<<date<<endl;
                 //End of the day Detected
-                cout<<endl;
+                //cout<<endl;
                 Chargers(account_number_list,dir,date,bank_Balance);
                 Interests(account_number_list,dir,date,bank_Balance);
             }
             else{
                 int gap = stodpres(date) - stodpres(old_date);
                 if (gap!=0){
-                    cout<< "\t\tGap" <<  gap <<endl<<endl;
+                    //cout<< "\t\tGap" <<  gap <<endl<<endl;
                     for (int j=0; j< gap; j++){
-                        cout<<endl;
+                        //cout<<endl;
                         string old_date_cal = to_string(stoi(old_date)+1);
                         Chargers(account_number_list,dir,old_date_cal,bank_Balance);
                         Interests(account_number_list,dir,old_date_cal,bank_Balance);
-                        cout<< "old date = " <<old_date<<endl<<endl;
+                        //cout<< "old date = " <<old_date<<endl<<endl;
                         old_date = old_date_cal;
                     }
                 }
@@ -298,8 +293,8 @@ int main() {
                 bank_Balance += stodpres(transaction_amount);
                 account_number_list[position].second = to_string_pres(account_balance);
             }
-            cout << date << "  " << account_number << "  " << transaction_type << "  " <<
-                 transaction_amount << "  " << account_balance << endl <<endl;
+            //cout << date << "  " << account_number << "  " << transaction_type << "  " <<
+                 //transaction_amount << "  " << account_balance << endl <<endl;
 
             //Create text file according to the account name
             //Create + Open + Write File
@@ -340,14 +335,14 @@ int main() {
 
 
     for (auto & i : account_number_list) {
-        cout <<  stodpres(i.first) << " ";
+        //cout <<  stodpres(i.first) << " ";
     }
-    cout<<endl;
+    //cout<<endl;
     for (auto & i : account_number_list) {
-        cout << stodpres(i.second) << " ";
+        //cout << stodpres(i.second) << " ";
     }
 
-    cout<<endl<<endl;
+    //cout<<endl<<endl;
 
     /*
     double f =3.14159123;
@@ -389,6 +384,79 @@ int main() {
             cout<< stold(bal) <<endl;
         }
     }*/
+
+    cout<< "\n* * * Urban Development Bank BookKeeping * * * \n\n";
+
+    cout<< "1. View bank vault balance\n";
+    cout<< "2. Current balance of all the customer accounts\n";
+    cout<< "2. Bank Vault Balance for specific day\n\n";
+
+    string inp;
+
+    Sleep(100);
+    cout<< "Enter number : ";
+    cin >> inp;
+
+    //cout<< endl<<account_number_list.size()<<endl;
+
+    if (inp == "1"){
+        //current balance of all the customer
+        cout<<"\nBank Balance = " << bank_Balance <<endl;
+    }
+    else if (inp == "2"){
+        //Current balance of all the customer accounts
+        cout <<  "Account Number" << "\t " << "Account Balance" << endl<<endl;
+        for (auto & i : account_number_list) {
+            cout << "   " << i.first << "\t    " << stodpres(i.second) << endl;
+        }
+    }
+    else if (inp == "3"){
+        ///////////////////////////////////////////////////////////// Show Day By day Bal
+        myReadFile.open(dir+"bankVault.txt");
+
+        old_date = "20210100";
+
+        vector <pair<string,string>> date_and_balances;
+        string inp_date = "20210101";
+
+        cout<<endl<< "Enter Date (format: 20210101) : ";
+        cin>> inp_date;
+
+        bool flag = 0;
+        string old_balance = "";
+
+        if (myReadFile.is_open()) {
+            while (!myReadFile.eof()) {
+                myReadFile >> output;
+
+                s = output;
+                while ((pos = s.find(delimiter)) != string::npos) {
+                    token = s.substr(0, pos);
+                    if (item_count % 3 == 0){
+                        date = token;
+                    }
+                    item_count++;
+                    s.erase(0, pos + delimiter.length());
+                }
+                transaction_amount = s;
+                //cout<< date << " " << old_date << "  "<< transaction_amount<<endl;
+                //cout<< stoi(date) << " " << stoi(old_date) << "  " <<transaction_amount<<endl<<endl;
+
+                if (stoi(date) == stoi(old_date) + 1){
+                    if (inp_date == old_date) {
+                        cout <<endl<< old_date << "  "<<old_balance << endl;
+                    }
+                }
+                old_date = date;
+                old_balance = transaction_amount;
+            }
+
+        }
+        myReadFile.close();
+    }
+    else {
+        cout<< "Input is wrong.. Try Again.\n";
+    }
 
     return 0;
 }
