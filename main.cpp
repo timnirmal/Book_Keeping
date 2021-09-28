@@ -21,8 +21,16 @@ double stodpres(string const &str, size_t const p = 2) {
     double d;
     sstrm >> d;
 
-    int o1 = d *1000;
-    double o2 = o1/1000.0;
+    double o2;
+
+    if ( d < 2147483){
+        int o1 = d *1000;
+        o2 = o1 / 1000.0;
+    }
+    else{
+        int o1 = d *100;
+        o2 = o1 / 100.0;
+    }
 
     cout<< setprecision(p) <<fixed ;
     return o2;
@@ -37,11 +45,59 @@ string to_string_pres(double num,  size_t const p = 2){
 
 void Chargers(vector <pair<string,string>> &account_number_list , string &dir, string &date, double &bank_Balance){
 
+    ifstream myReadFile;
+    string transaction_type = "4";
+
     for (int i=0; i < account_number_list.size(); i++){
+        cout<<"\t"<<i<<"  " << account_number_list[i].first << "  "<< account_number_list[i].second<<endl;
         string account_number = account_number_list[i].first;
 
-        string transaction_type = "4";
-        ifstream myReadFile;
+        string transaction_amount;
+        double account_balance = stodpres(account_number_list[i].second);
+
+        if (account_balance < 1000) {
+            if (0 < account_balance && account_balance < 1000) {
+                //Perform transaction
+                account_balance -= 10;
+                bank_Balance += 10;
+                transaction_amount = "-10";
+            } else if (account_balance < 0) {
+                account_balance -= 50;
+                bank_Balance += 50;
+                transaction_amount = "-50";
+            }
+            account_number_list[i].second = to_string_pres(account_balance);
+
+            //User Accounts
+            myReadFile.open(dir + "transaction.txt");
+            //Create text file according to the account name
+            //Create + Open + Write File
+            ofstream accounts(dir + "accounts\\" + account_number, ios_base::app);
+            accounts << date << "," << transaction_type << "," << transaction_amount << "," <<
+                     to_string_pres(account_balance) << endl;
+            accounts.close();
+
+            cout << date << "  " << account_number << "  " << transaction_type << "  " << account_balance << endl;
+
+            ////bankVault
+            ofstream bankVault(dir + "bankVault.txt", ios_base::app);
+            bankVault << date << "," << transaction_type << ","
+                      << transaction_amount << "," << to_string_pres(bank_Balance) << endl;
+            bankVault.close();
+
+        }
+    }
+}
+
+void Interests(vector <pair<string,string>> &account_number_list, string &dir, string &date, double bank_Balance){
+
+    ifstream myReadFile;
+    string transaction_type = "4";
+
+    for (int i=0; i < account_number_list.size(); i++){
+        cout<<"\t"<<i<<"  " << account_number_list[i].first << "  "<< account_number_list[i].second<<endl;
+        string account_number = account_number_list[i].first;
+
         string transaction_amount = "-10";
         double account_balance = stodpres(account_number_list[i].second);
 
@@ -50,8 +106,10 @@ void Chargers(vector <pair<string,string>> &account_number_list , string &dir, s
             account_balance -= 10;
             bank_Balance += 10;
 
+            account_number_list[i].second = to_string_pres(account_balance);
+
             //User Accounts
-             myReadFile.open(dir + "transaction.txt");
+            myReadFile.open(dir + "transaction.txt");
             //Create text file according to the account name
             //Create + Open + Write File
             ofstream accounts (dir + "accounts\\" + account_number,ios_base::app);
@@ -64,39 +122,7 @@ void Chargers(vector <pair<string,string>> &account_number_list , string &dir, s
             ////bankVault
             ofstream bankVault (dir + "bankVault.txt",ios_base::app);
             bankVault << date << "," << transaction_type << ","
-                << transaction_amount << "," << to_string_pres(bank_Balance) <<endl;
-            bankVault.close();
-
-        }
-    }
-}
-
-void Interests(vector <pair<string,string>> &account_number_list, string &dir, string &date, double bank_Balance){
-    for (int i=0; i < account_number_list.size(); i++){
-        string account_number = account_number_list[i].first;
-        string transaction_type = "";
-        ifstream myReadFile;
-
-        string transaction_amount;
-        double account_balance;
-        double bank_Balance;
-
-        if (stodpres(account_number_list[i].second) < 1000){
-            //Perform transaction
-            //User Accounts
-             myReadFile.open(dir + "transaction.txt");
-            //Create text file according to the account name
-            //Create + Open + Write File
-            ofstream accounts (dir + "accounts\\" + account_number,ios_base::app);
-            /*accounts << date << "," << transaction_type << "," << transaction_amount << "," <<
-                     to_string_pres(account_balance) << endl;
-            accounts.close();
-            cout << "\t" << date << "  " << account_number << "  " << transaction_type << "  " << account_balance << endl;
-*/
-            ////bankVault
-            ofstream bankVault (dir + "bankVault.txt",ios_base::app);
-            bankVault << date << "," << transaction_type << ","
-                << transaction_amount << "," << to_string_pres(bank_Balance) <<endl;
+                      << transaction_amount << "," << to_string_pres(bank_Balance) <<endl;
             bankVault.close();
 
         }
@@ -125,7 +151,6 @@ int main() {
     vector <pair<string,string>> account_number_list;
     //vector <string> account_balance_list;
 
-
     //////////////////////////////////////// Need find solution for non empty folders. But this will still do the work.
     //Delete Folder
     _rmdir("C:\\Users\\timni\\Book-Keeping\\accounts");
@@ -143,7 +168,7 @@ int main() {
     ofstream bankVault (dir + "bankVault.txt");
     bankVault.close();
     double bank_Balance = 0;
-    double account_balance ;
+    double account_balance = 0;
 
     if (myReadFile.is_open()) {
         while (!myReadFile.eof()) {
@@ -180,6 +205,9 @@ int main() {
     }
     myReadFile.close();
 
+   // cout<<endl<<endl;
+   // cout << to_string_pres(4004345.88 - 500);
+    //cout<<endl<<endl;
 
     ///////////////////////////////////////////////////////////// Read transaction
 ////////////////////////////////////////////////////////////
@@ -219,8 +247,9 @@ int main() {
             //Check beginning of the date
             if (date != old_date){
                 //End of the day Detected
-                //Chargers(account_number_list,dir,date,bank_Balance);
-                //Interests(account_number_list,dir,date,bank_Balance);
+                cout<<endl;
+                Chargers(account_number_list,dir,date,bank_Balance);
+                Interests(account_number_list,dir,date,bank_Balance);
             }
 
             if (stoi(transaction_type) == 1){ //Deposit
@@ -234,7 +263,6 @@ int main() {
                 bank_Balance += stodpres(transaction_amount);
                 account_number_list[position].second = to_string_pres(account_balance);
             }
-
             cout << date << "  " << account_number << "  " << transaction_type << "  " <<
                  transaction_amount << "  " << account_balance << endl <<endl;
 
@@ -267,12 +295,13 @@ int main() {
 
     s = "He,Yaluwe,apiawaw\n";
 
+    /*
     while ((pos = s.find(delimiter)) != string::npos) {
         token = s.substr(0, pos);
         cout << token << endl;
         s.erase(0, pos + delimiter.length());
     }
-    cout << s << endl;
+    cout << s << endl;*/
 
 
     for (auto & i : account_number_list) {
