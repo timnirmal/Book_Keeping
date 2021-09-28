@@ -72,7 +72,7 @@ int main() {
     //Delete any content exists (change later)
     ofstream bankVault (dir + "bankVault.txt");
     bankVault.close();
-    int bank_Balance = 0;
+    double bank_Balance = 0;
     double account_balance ;
 
     if (myReadFile.is_open()) {
@@ -105,7 +105,7 @@ int main() {
 
         ////bankVault
         ofstream bankVault (dir + "bankVault.txt",ios_base::app);
-        bankVault << date << ",0," << transaction_amount << "," << bank_Balance <<endl;
+        bankVault << date << ",0," << to_string_pres(bank_Balance) << "," << to_string_pres(bank_Balance) <<endl;
         bankVault.close();
     }
     myReadFile.close();
@@ -141,17 +141,16 @@ int main() {
                 }
             }
 
-            if (stoi(transaction_type) == 1){
+            if (stoi(transaction_type) == 1){ //Deposit
                 //need to read the Balance from account
-                //cout << "\n\tBefore = " << account_balance;
                 account_balance += stodpres(transaction_amount);
-                //cout << "\tAfter = " << account_balance <<endl;
+                bank_Balance -= stodpres(transaction_amount);
             }
             else {
-                //cout << endl<<account_balance << "  "<< stodpres(transaction_amount) << "  "<<
-                  //account_balance - stodpres(transaction_amount)<<endl;
                 account_balance -= stodpres(transaction_amount);
+                bank_Balance += stodpres(transaction_amount);
             }
+
             //Create text file according to the account name
             //Create + Open + Write File
             ofstream accounts (dir + "accounts\\" + account_number,ios_base::app);
@@ -159,10 +158,11 @@ int main() {
                      to_string_pres(account_balance) << endl;
             accounts.close();
             cout << date << "  " << account_number << "  " << transaction_type << "  " << account_balance << endl;
+
             ////bankVault
             ofstream bankVault (dir + "bankVault.txt",ios_base::app);
             bankVault << date << "," << transaction_type << ","
-                << transaction_amount << "," << transaction_amount <<endl;
+                << transaction_amount << "," << to_string_pres(bank_Balance) <<endl;
             bankVault.close();
         }
     }
